@@ -17,7 +17,8 @@ Basic api server:
 graphical: true enables GraphiQL interactive interface
 
 
-When passing in arguments via browser, use $var syntax as below
+When passing in arguments via browser, use $ syntax to define variables in query and pass the queries the variables as a separate map
+
 Example schema:
  `type Query {
     rollDice(numDice: Int!, numSides: Int): [Int]

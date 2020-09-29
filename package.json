@@ -1,0 +1,10 @@
+{
+  "name": "graphqlorg_tutorial",
+  "version": "1.0.0",
+  "description": "the official tutorial at grahpql.org",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^15.3.0"
+  }
+}

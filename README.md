@@ -10,25 +10,29 @@ A resolver function returns one of the following:
   A promise that fulfills with data of the required type
 
 Basic api server:
-  `var app = express();
-   app.use('/graphql', graphqlHTTP({
-     schema: schema,
-     rootValue: root,
-     graphiql: true,
-   }));
-   app.listen(4000);`
-
+~~~
+var app = express();
+ app.use('/graphql', graphqlHTTP({
+   schema: schema,
+   rootValue: root,
+   graphiql: true,
+ }));
+ app.listen(4000);
+~~~
 graphical: true enables GraphiQL interactive interface
 
 
 When passing in arguments via browser, use $ syntax to define variables in query and pass the queries the variables as a separate map
 
 Example schema:
- `type Query {
-    rollDice(numDice: Int!, numSides: Int): [Int]
-  }`
+~~~
+type Query {
+  rollDice(numDice: Int!, numSides: Int): [Int]
+}
+~~~
 
-Browser code to use:
+Query
+~~~
 var dice = 3;
 var sides = 6;
 var query = `query RollDice($dice: Int!, $sides: Int) {
@@ -48,3 +52,33 @@ fetch('/graphql', {
 })
  .then(r => r.json())
  .then(data => console.log('data returned:', data));
+~~~
+Mutation
+~~~
+var author = 'andy';
+var content = 'hope is a good thing';
+var query = `mutation CreateMessage($input: MessageInput) {
+ createMessage(input: $input) {
+   id
+ }
+}`;
+
+fetch('/graphql', {
+ method: 'POST',
+ headers: {
+   'Content-Type': 'application/json',
+   'Accept': 'application/json',
+ },
+ body: JSON.stringify({
+   query,
+   variables: {
+     input: {
+       author,
+       content,
+     }
+   }
+ })
+})
+ .then(r => r.json())
+ .then(data => console.log('data returned:', data));
+ ~~~

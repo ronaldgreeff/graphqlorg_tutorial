@@ -7,7 +7,7 @@ var { buildSchema } = require('graphql');
   // type Query {
   //   rollDice(numDice: Int!, numSides: Int): [Int]
   // }
-// to this RandomDie object:
+// to this RandomDie GraphQL type:
 var schema = buildSchema(`
   type RandomDie {
     numSides: Int!
@@ -21,7 +21,7 @@ var schema = buildSchema(`
 
 // Instead of root level resolver, can define a class where resolvers
 // are methods of the instance - This ES6 class implements the
-// RandomDie GraphQL type:
+// RandomDie object:
 class RandomDie {
   constructor(numSides) {
     this.numSides = numSides;
@@ -38,15 +38,32 @@ class RandomDie {
   }
 }
 
+// The root provides the top-level API endpoints
 var root = {
   getDie: ({numSides}) => {
     return new RandomDie(numSides || 6);
   }
 };
-// then use the query (see notes at end):
+// --- query:
 // {
 //   getDie(numSides: 6) {
+//     numSides
 //     rollOnce
+//     roll(numRolls: 3)
+//   }
+// }
+// --- result:
+// {
+//   "data": {
+//     "getDie": {
+//       "numSides": 6,
+//       "rollOnce": 2,
+//       "roll": [
+//         3,
+//         6,
+//         1
+//       ]
+//     }
 //   }
 // }
 
@@ -58,21 +75,3 @@ app.use('/graphql', graphqlHTTP({
 }));
 app.listen(4000);
 console.log('Running a GraphQL API server at http://localhost:4000/graphql');
-
-// Notes:
-// if you run:
-//
-// {
-//   getDie(numSides: 6)
-// }
-//
-// You get the following error message:
-//   "Field \"getDie\" of type \"RandomDie\" must have a selection of subfields. Did you mean \"getDie { ... }\"?",
-//
-// You need:
-//
-// {
-//   getDie(numSides: 6) {
-//     roll(numRolls: 3)
-//   }
-// }

@@ -28,4 +28,55 @@ app.use('/graphql', graphqlHTTP({
 app.listen(4000);
 console.log('Running a GraphQL API server at http://localhost:4000/graphql');
 
-// { hello } will return you { data: { hello: 'Hello world!' } }
+// querying { hello } will return you { data: { hello: 'Hello world!' } }
+
+
+// GraphQL Clients
+// *Relay is a powerful client that handles batching, caching and more*
+
+// HTTP POST request to endpoint with query field in JSON payload
+// curl -X POST
+// -H "Content-Type: application/json"
+// -d '{"query": "{ hello }"}' http://localhost:4000/graphql
+
+// in Brower @ localhost:4000/graphql
+// fetch('/graphql', {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'Accept': 'application/json',
+//   },
+//   body: JSON.stringify({query: "{ hello }"})
+// })
+//   .then(r => r.json())
+//   .then(data => console.log('data returned:', data));
+
+
+
+// When passing in arguments via browser, use $var syntax as below
+
+// eg. schema
+// `type Query {
+//   rollDice(numDice: Int!, numSides: Int): [Int]
+// }`
+//
+// Browser
+// var dice = 3;
+// var sides = 6;
+// var query = `query RollDice($dice: Int!, $sides: Int) {
+//   rollDice(numDice: $dice, numSides: $sides)
+// }`;
+//
+// fetch('/graphql', {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'Accept': 'application/json',
+//   },
+//   body: JSON.stringify({
+//     query,                       <--- autoescapes vars
+//     variables: { dice, sides },  <--- $dice and $sides
+//   })
+// })
+//   .then(r => r.json())
+//   .then(data => console.log('data returned:', data));

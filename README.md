@@ -1,15 +1,19 @@
-Getting Started With GraphQL.js
+# Getting Started With GraphQL.js
 https://graphql.org/graphql-js/
 
-To handle GraphQl queries, define SCHEMA that defines the Query type - note that use of back quotes.
-GraphQL schema defines what types of data a client can read and write to your data graph
+## Basic Structure
+GraphQL isn't a query language (like SQL), it's an alternative to REST APIs.
 
-We also need an API root with a RESOLVER function per API endpoint
+To handle GraphQL queries, define a SCHEMA (defines the Query type),  and an API root with a RESOLVER function per API endpoint.
+
+The schema defines what types of data a client can read from / write to your data graph.
+Note uses back quotes (``, not '') for defining the schema.
+
 A resolver function returns one of the following:
-  Data of the type required by the resolver's corresponding schema field (string, integer, object, etc.)
-  A promise that fulfills with data of the required type
+-  Data of the type required by the resolver's corresponding schema field (string, integer, object, etc.)
+ - A promise that fulfills with data of the required type
 
-Basic api server:
+### Basic api server:
 ~~~
 var app = express();
  app.use('/graphql', graphqlHTTP({
@@ -19,19 +23,12 @@ var app = express();
  }));
  app.listen(4000);
 ~~~
-graphical: true enables GraphiQL interactive interface
+> `graphiql: true` enables GraphiQL interactive interface
 
 
-When passing in arguments via browser, use $ syntax to define variables in query and pass the queries the variables as a separate map
+When passing in arguments via browser, use `$` syntax to define variables in the query and pass them as variables in a separate map:
 
-Example schema:
-~~~
-type Query {
-  rollDice(numDice: Int!, numSides: Int): [Int]
-}
-~~~
-
-Query
+#### Query
 ~~~
 var dice = 3;
 var sides = 6;
@@ -53,7 +50,13 @@ fetch('/graphql', {
  .then(r => r.json())
  .then(data => console.log('data returned:', data));
 ~~~
-Mutation
+> **schema**
+> ~~~
+> type Query {
+>  rollDice(numDice: Int!, numSides: Int): [Int]
+>}
+>~~~
+#### Mutation
 ~~~
 var author = 'andy';
 var content = 'hope is a good thing';
@@ -62,13 +65,7 @@ var query = `mutation CreateMessage($input: MessageInput) {
    id
  }
 }`;
-
-fetch('/graphql', {
- method: 'POST',
- headers: {
-   'Content-Type': 'application/json',
-   'Accept': 'application/json',
- },
+...
  body: JSON.stringify({
    query,
    variables: {
@@ -79,6 +76,5 @@ fetch('/graphql', {
    }
  })
 })
- .then(r => r.json())
- .then(data => console.log('data returned:', data));
- ~~~
+...
+~~~

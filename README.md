@@ -2,8 +2,12 @@ Getting Started With GraphQL.js
 https://graphql.org/graphql-js/
 
 To handle GraphQl queries, define SCHEMA that defines the Query type - note that use of back quotes.
+GraphQL schema defines what types of data a client can read and write to your data graph
 
 We also need an API root with a RESOLVER function per API endpoint
+A resolver function returns one of the following:
+  Data of the type required by the resolver's corresponding schema field (string, integer, object, etc.)
+  A promise that fulfills with data of the required type
 
 Basic api server:
   `var app = express();

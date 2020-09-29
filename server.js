@@ -2,70 +2,27 @@ var express = require('express');
 var { graphqlHTTP } = require('express-graphql');
 var { buildSchema } = require('graphql');
 
-// Most times, you want to return an object from the API, not just a val
-// from this:
-  // type Query {
-  //   rollDice(numDice: Int!, numSides: Int): [Int]
-  // }
-// to this RandomDie GraphQL type:
+// If you're inserting into or altering data of a database, use Mutation
 var schema = buildSchema(`
-  type RandomDie {
-    numSides: Int!
-    rollOnce: Int!
-    roll(numRolls: Int!): [Int]
+  type Mutation {
+    setMessage(message: String): String
   }
   type Query {
-    getDie(numSides: Int): RandomDie
+    getMessage: String
   }
 `);
 
-// Instead of root level resolver, can define a class where resolvers
-// are methods of the instance - This ES6 class implements the
-// RandomDie object:
-class RandomDie {
-  constructor(numSides) {
-    this.numSides = numSides;
-  }
-  rollOnce() {
-    return 1 + Math.floor(Math.random() * this.numSides);
-  }
-  roll({numRolls}) {
-    var output = [];
-    for (var i=0; i<numRolls; i++) {
-      output.push(this.rollOnce());
-    }
-    return output;
-  }
-}
-
-// The root provides the top-level API endpoints
+var fakeDatabase = {};
+// useful to return the message after it's set
 var root = {
-  getDie: ({numSides}) => {
-    return new RandomDie(numSides || 6);
-  }
+  setMessage: ({message}) => {
+    fakeDatabase.message = message;
+    return message;
+  },
+  getMessage: () => {
+    return fakeDatabase.message;
+  },
 };
-// --- query:
-// {
-//   getDie(numSides: 6) {
-//     numSides
-//     rollOnce
-//     roll(numRolls: 3)
-//   }
-// }
-// --- result:
-// {
-//   "data": {
-//     "getDie": {
-//       "numSides": 6,
-//       "rollOnce": 2,
-//       "roll": [
-//         3,
-//         6,
-//         1
-//       ]
-//     }
-//   }
-// }
 
 var app = express();
 app.use('/graphql', graphqlHTTP({
